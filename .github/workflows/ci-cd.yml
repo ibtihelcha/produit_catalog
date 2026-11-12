@@ -7,6 +7,10 @@ on:
   pull_request:
     branches: ["main"]
 
+permissions:
+  contents: read
+  checks: write
+
 jobs:
 
   # JOB 1 : Tests unitaires
@@ -36,6 +40,24 @@ jobs:
           --filter "FullyQualifiedName~ProductUnitTests"
           --configuration Release
           --logger "console;verbosity=detailed"
+          --logger "trx;LogFileName=UnitResults.trx"
+          --results-directory ./TestResults/UnitTests
+
+      - name: Upload Unit Tests Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-test-results
+          path: ./TestResults/UnitTests/*.trx
+          if-no-files-found: warn
+
+      - name: Publish Test Summary
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: 'Report - Unit Tests'
+          path: './TestResults/UnitTests/*.trx'
+          reporter: 'dotnet-trx'
 
   # JOB 2 : Tests d'intégration avec SQL Server
   integration-test:
@@ -81,3 +103,21 @@ jobs:
           --filter "FullyQualifiedName~ProductIntegrationTests"
           --configuration Release
           --logger "console;verbosity=detailed"
+          --logger "trx;LogFileName=IntegrationResults.trx"
+          --results-directory ./TestResults/IntegrationTests
+
+      - name: Upload Integration Tests TRX
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-test-results
+          path: ./TestResults/IntegrationTests/*.trx
+          if-no-files-found: warn
+
+      - name: Publish Test Summary
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: 'Report - Integration Tests'
+          path: './TestResults/IntegrationTests/*.trx'
+          reporter: 'dotnet-trx'
