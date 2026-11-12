@@ -83,6 +83,6 @@ public class ProductUnitTests : IClassFixture<WebApplicationFactory<Program>>
 
         Assert.NotNull(products);
         Assert.NotEmpty(products);
-        Assert.Contains(products, p => p.Name == "Souris sans fil");
+        Assert.Contains(products, p => p.Name == "Ecran 27 pouces");
     }
 }
