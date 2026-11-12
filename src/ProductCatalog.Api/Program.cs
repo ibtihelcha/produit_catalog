@@ -103,3 +103,4 @@ app.MapDelete("/api/products/{id:int}", async (int id, AppDbContext db) =>
 
 app.Run();
 // Test des pull requests !!!
+public partial class Program { }
